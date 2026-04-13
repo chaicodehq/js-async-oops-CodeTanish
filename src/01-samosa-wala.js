@@ -80,51 +80,69 @@ export function createSamosaCart(ownerName, location) {
 
   return {
     owner: ownerName,
-    location, 
+    location,
     menu: { samosa: 15, jalebi: 20, kachori: 25 },
     sales: [],
     sellItem(itemName, quantity) {
-      if(!this.menu.hasOwnProperty(itemName) || quantity <= 0) return -1
-      
-      const total = this.menu[itemName] * quantity
-      
+      if (!this.menu.hasOwnProperty(itemName) || quantity <= 0) return -1;
+
+      const total = this.menu[itemName] * quantity;
+
       this.sales.push({
-        item: itemName, 
+        item: itemName,
         quantity,
-        total
-      })
+        total,
+      });
 
-      return total
+      return total;
     },
-    getDailySales(){
-      if(this.sales.length <= 0) return 0
+    getDailySales() {
+      if (this.sales.length <= 0) return 0;
 
-      return this.sales.reduce((sum, curr) => sum + curr.total, 0)
+      return this.sales.reduce((sum, curr) => sum + curr.total, 0);
     },
-     getPopularItem(){
-      if(this.sales.length <= 0) return null
-     },
-     moveTo(newLocation){
-      this.location = newLocation
+    getPopularItem() {
+      if (this.sales.length === 0) return null;
 
-      return `${this.owner} ka cart ab ${newLocation} pe hai!`
-     },
-     resetDay(){
-      this.sales = []
-      return `${this.owner} ka naya din shuru!`
-     }
+      const countMap = {};
+
+      for (const sale of this.sales) {
+        countMap[sale.item] = (countMap[sale.item] || 0) + sale.quantity;
+      }
+
+      let maxItem = null;
+      let maxQty = 0;
+
+      for (const item in countMap) {
+        if (countMap[item] > maxQty) {
+          maxQty = countMap[item];
+          maxItem = item;
+        }
+      }
+
+      return maxItem;
+    },
+    moveTo(newLocation) {
+      this.location = newLocation;
+
+      return `${this.owner} ka cart ab ${newLocation} pe hai!`;
+    },
+    resetDay() {
+      this.sales = [];
+      return `${this.owner} ka naya din shuru!`;
+    },
   };
 }
 
 export function demonstrateThisLoss(cart) {
   // Your code here
 
-  const lostFn = cart.sellItem
-  return lostFn
+  const lostFn = cart.sellItem;
+  return lostFn;
 }
 
 export function fixWithBind(cart) {
   // Your code here
-  const boundFn = cart.sellItem
-  return boundFn.bind(cart)
+  const boundFn = cart.sellItem;
+  return boundFn.bind(cart);
 }
